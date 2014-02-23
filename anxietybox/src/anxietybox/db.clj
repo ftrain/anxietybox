@@ -15,8 +15,13 @@
           :stringtype "unspecified"})
 
 (defn box-insert [box]
-  (sql/insert! pg "box" box))
+  (try
+    (sql/insert! pg "box" box)
+    (catch Exception e e)))
 
+(if (= (type e) org.postgresql.util.PSQLException)
+
+(type (box-insert {:fullname "Paul Ford" :project "i will never find love" :confirm (uuid) :email "ford+z@ftrain.com"}))
 (defn box-select [email]
   (first (sql/query pg
            ["select * from box where lower(email) = lower(?)" email])))
@@ -45,8 +50,13 @@
   [code]
   (toggle-block code false))
 
+(defn box-delete
+  [code]
+  (sql/delete! pg "box" ["confirm=?" code]))
+
 (defn boxes-for-update []
   (sql/query pg ["SELECT * from box where active=?" true]))
 
-(box-activate (:confirm (box-select "ford@ftrain.com")))
+
+(box-select "ford@localhost")
 

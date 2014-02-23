@@ -12,3 +12,12 @@
   (testing "not-found route"
     (let [response (app (request :get "/invalid"))]
       (is (= (:status response) 404)))))
+
+(defn bootstrap []
+  (do (db/box-insert {:fullname "Paul Ford"
+                    :email "ford@ftrain.com"
+                    :project "The Secret Lives of Web Pages"
+                    :confirm (db/uuid)
+                    })))
+
+(bootstrap)
