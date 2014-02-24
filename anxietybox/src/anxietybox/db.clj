@@ -19,9 +19,6 @@
     (sql/insert! pg "box" box)
     (catch Exception e e)))
 
-(if (= (type e) org.postgresql.util.PSQLException)
-
-(type (box-insert {:fullname "Paul Ford" :project "i will never find love" :confirm (uuid) :email "ford+z@ftrain.com"}))
 (defn box-select [email]
   (first (sql/query pg
            ["select * from box where lower(email) = lower(?)" email])))
@@ -58,5 +55,5 @@
   (sql/query pg ["SELECT * from box where active=?" true]))
 
 
-(box-select "ford@localhost")
+; (box-select "ford@localhost")
 
