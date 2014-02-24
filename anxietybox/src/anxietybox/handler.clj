@@ -191,7 +191,7 @@ $('input.field').bind('click', function(s){$(this).attr('value','');});
 
                      [:div#form
                        [:h3 "your name"]
-                       [:input.field {:type "text" :value "First name only" :name "fullname"}]
+                       [:input.field {:type "text" :value "First name only" :name "name"}]
                        [:div.gloss "So that we can personalize the terrible emails."]
 
                        [:h3 "email address"]                       
