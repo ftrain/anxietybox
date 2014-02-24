@@ -1,5 +1,5 @@
 (ns anxietybox.email.send
-  (:requires
+  (:require
     [anxietybox.bot :as bot]    
     [clojurewerkz.mailer.core :as mail]))
 
