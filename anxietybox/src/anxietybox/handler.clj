@@ -224,7 +224,9 @@ $('input.field').bind('click', function(s){$(this).attr('value','');});
                     [:h2 "You've already signed up. We sent you an account reminder. It has a link that lets you delete your account and start again."]]))))))))
 
   (GET "/bot" []
-    (cheshire/generate-string {:statements (take 50 (repeatedly bot/anxietybot))}))
+    {:headers {"Content-Type" "application/json;charset=UTF-8"}
+      :body  (cheshire/generate-string {:statements (take 5 (repeatedly bot/anxietybot))})})
+
   
   (GET "/activate/:id" [id]
     (do (let [res (first (db/box-activate id))]
