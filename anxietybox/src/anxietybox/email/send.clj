@@ -27,9 +27,6 @@
     box
   :text/html))
 
-(send-reminder
-  (db/box-select "ford@localhost"))
-
 (defn send-anxiety [box anxiety]
   (mail/deliver-email {:from default-email
                         :to [(:email box)]
