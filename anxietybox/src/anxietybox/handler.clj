@@ -1,7 +1,7 @@
 (ns anxietybox.handler
   (:use compojure.core)
   (:require
-    [anxietybox.db :as db]
+    [anxietybox.sql :as sql]
     [anxietybox.bot :as bot]    
     [anxietybox.email.send :as send]    
     [compojure.handler :as handler]
@@ -168,7 +168,7 @@ $('input.field').bind('click', function(s){$(this).attr('value','');});
         [:title title]
       [:style {:type "text/css"} css]]
       [:body body
-        [:div#footer "An experiment to help people manage anxiety. &copy;2014 " [:a {:href "http://twitter.com/ftrain"} "Paul Ford."] " All rights reserved. "]
+        [:div#footer "An anxiety simulator. &copy;2014 " [:a {:href "http://twitter.com/ftrain"} "Paul Ford."] " All rights reserved. "]
         ]]))
 
 (defroutes app-routes
@@ -182,13 +182,16 @@ $('input.field').bind('click', function(s){$(this).attr('value','');});
 
                    [:div#info
                      [:p "Stop making yourself anxious&mdash;that's our job! <b>Fill out the form to the left and leave your anxiety with us.</b>"]
-                     [:p "When you're anxious <b>your anxiety spams your mind</b> and leads to a scientific condition known as <b>procrastinatory shame despair</b>."]
+
+                     [:p "When you're anxious <b>your anxiety spams your mind</b> and leads to a condition known as <b>procrastinatory shame despair</b>."]
+
                      [:p "We will take over and send you <b>anxious, urgent, deeply upsetting emails</b>. Delete the email and <b>POOF! the anxiety goes away</b>."]
-                     [:p "Relief and hilarity is here if you want it."]]
+
+                     [:p "Relief is here if you want it."]]
 
                      [:div#form
                        [:h3 "your name"]
-                       [:input.field {:type "text" :value "Firstname Lastname" :name "fullname"}]
+                       [:input.field {:type "text" :value "First name only" :name "fullname"}]
                        [:div.gloss "So that we can personalize the terrible emails."]
 
                        [:h3 "email address"]                       
@@ -203,20 +206,20 @@ $('input.field').bind('click', function(s){$(this).attr('value','');});
 
   (POST "/" {params :params}
     (let [errors (check-params params)
-           id (db/uuid)]
+           id (sql/uuid)]
       (if (not= errors ())
         errors
-        (let [b (db/box-insert (merge params {:confirm id}))]
+        (let [b (sql/box-insert (merge params {:confirm id}))]
           (if (not= (type b) "org.postgresql.util.PSQLException")
             (do
-              (send/send-confirmation (db/box-insert (merge params {:confirm id})))
+              (send/send-confirmation (sql/box-insert (merge params {:confirm id})))
               (make-page "Anxiety Box: Anxiety received"
                 (html/html
                   [:div#main        
                     [:h1 "Anxiety Received"]
                     [:h2 "We received your anxiety. Look for a confirmation email from anxiety@anxietybox.com"]])))
             (do
-              (send/send-reminder (db/box-insert params))
+              (send/send-reminder (sql/box-insert params))
               (make-page "Anxiety Box: Duplicate account"
                 (html/html
                   [:div#main                          
@@ -225,18 +228,18 @@ $('input.field').bind('click', function(s){$(this).attr('value','');});
 
   (GET "/bot" []
     {:headers {"Content-Type" "application/json;charset=UTF-8"}
-      :body  (cheshire/generate-string {:statements (take 5 (repeatedly bot/anxietybot))})})
+      :body  (cheshire/generate-string {:statements (take 10 (repeatedly bot/ps))})})
 
   
   (GET "/activate/:id" [id]
-    (do (let [res (first (db/box-activate id))]
+    (do (let [res (first (sql/box-activate id))]
     (make-page "Anxiety Box"
       (html/html [:div#main
                    [:h1 
                      (if (= 1 res) "Activated" "Already activated")]])))))
 
   (GET "/delete/:id" [id]
-    (do (let [res (first (db/box-delete id))]
+    (do (let [res (first (sql/box-delete id))]
           (make-page "Anxiety Box: Account deleted"
             (html/html
               [:div#main
