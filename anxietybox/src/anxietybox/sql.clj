@@ -1,4 +1,4 @@
-(ns anxietybox.db
+(ns anxietybox.sql
   (:require
     [clojure.java.jdbc :as sql]))
 
@@ -10,9 +10,11 @@
 
 (def pg {:subprotocol "postgresql"
           :subname "anxietybox"
-          :user "postgres"
-          :password "postgres"
+          :user "unscroll"
+          :password "waffles"
           :stringtype "unspecified"})
+
+(sql/query pg ["select * from box"])
 
 (defn box-insert [box]
   (try
