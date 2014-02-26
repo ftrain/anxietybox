@@ -35,10 +35,3 @@ CREATE TABLE anxiety_box (
        anxiety_id int REFERENCES anxiety(id) ON DELETE CASCADE,       
        sent DATE NOT NULL DEFAULT NOW()
        );
-
--- You don't have enough information to do [TK].
--- You are a bad person who will never finish [TK].
--- Everyone will laugh at you when you show them.
--- You are going to let down the people you trust.
--- You will never get yourself under control.
--- No matter how hard you work on [P] it will never be good enough.
