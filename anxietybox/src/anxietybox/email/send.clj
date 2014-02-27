@@ -19,31 +19,29 @@
                         :subject (prefix "Confirmation requested")}
     "templates/activate.mustache"
     box
-  :text/html))
+  :text/plain))
 
-(sql/box-select "ford@ftrain.com")
+
 (defn send-reminder [box]
   (mail/deliver-with-sendmail {:from default-email
                         :to [(:email box)]
                         :subject (prefix "Account info")}
     (if (:active box)"templates/deactivate.mustache" "templates/activate.mustache")
     box
-  :text/html))
+  :text/plain))
 
-(defn send-anxiety [box anxiety]
+(defn send-anxiety [box]
   (if (:active box)
     (mail/deliver-with-sendmail {:from default-email
                                  :to [(:email box)]
-                                 :subject (:subject anxiety)}
+                                 :subject "More on your failings"}
                                 "templates/anxiety.mustache"
-                                (merge box anxiety)
-                                :text/html)))
-
-
-(defn send-emails [] {:response "OKAY"})
-
-(defn handle-reply [reply] {:response "OKAY" :reply reply})
+                                (merge box {:anxiety (bot/ps)})
+                                :text/plain)))
 
 
 
+(defn send-emails [] (send-anxiety (sql/box-select "ford@ftrain.com")))
+
+(defn handle-reply [reply] (prn {:response "OKAY" :reply reply}))
 
