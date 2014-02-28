@@ -11,7 +11,6 @@
                   [clojurewerkz/mailer "1.0.0"]
                   [cheshire "5.3.1"]                  
                   [com.taoensso/timbre "3.0.1"]
-                  [http-kit "2.1.16"]
                                         ; project.clj
                   ]
   :plugins [[lein-ring "0.8.10"]]
