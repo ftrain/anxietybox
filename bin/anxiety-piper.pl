@@ -1,7 +1,7 @@
 #!/bin/env perl
 $email = "";
 while (<STDIN>) { 
-    die "TOO MANY LINES" if 1000 > $x++; 
+    die "TOO MANY LINES" if 1000 < $x++; 
     $email .= $_;
 }
 $email =~ s/'/\\'/;
