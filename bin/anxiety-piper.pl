@@ -5,5 +5,6 @@ while (<STDIN>) {
     $email .= $_;
 }
 $email =~ s/'/\\'/;
-
-open (F, "|curl -F'auth=100&email=$email' --url http://anxietybox.com/reply");
+$code = "215b7fa466431ae07ac879aad6ba7576";
+    
+open (F, "|curl -F'auth=$code&email=$email' --url http://anxietybox.com/reply");
