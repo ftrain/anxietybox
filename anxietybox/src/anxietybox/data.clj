@@ -1,4 +1,4 @@
-(ns anxietybox.sql
+(ns anxietybox.data
   (:require
     [clojure.java.jdbc :as sql]))
 
@@ -54,7 +54,7 @@
 (defn boxes-for-update []
   (sql/query pg ["SELECT * from box where active=?" true]))
 
-(defn get-boxes
+; (defn get-boxes
   
 
 ; (box-select "ford@localhost")

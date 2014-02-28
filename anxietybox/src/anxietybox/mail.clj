@@ -1,9 +1,8 @@
-(ns anxietybox.email.send
+(ns anxietybox.mail
   (:require
     [anxietybox.bot :as bot]    
-    [anxietybox.sql :as sql]    
+    [anxietybox.data :as data]    
     [clojurewerkz.mailer.core :as mail]))
-
 
 ;; set default delivery mode (:smtp, :sendmail or :test)
 
@@ -41,7 +40,7 @@
 
 
 
-(defn send-emails [] (send-anxiety (sql/box-select "ford@ftrain.com")))
+(defn send-emails [] (send-anxiety (data/box-select "ford@ftrain.com")))
 
 (defn handle-reply [reply] (prn {:response "OKAY" :reply reply}))
 
