@@ -14,7 +14,6 @@ CREATE TABLE box (
        name VARCHAR(100) NOT NULL,
        email VARCHAR(100) UNIQUE NOT NULL,
        count INT NOT NULL DEFAULT 0,
-       project TEXT NOT NULL,
        confirm uuid NOT NULL,
        active BOOLEAN DEFAULT FALSE
        );
