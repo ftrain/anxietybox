@@ -10,13 +10,15 @@
 
 (def pg {:subprotocol "postgresql"
           :subname "anxietybox"
-          :user "unscroll"
+          :user "postgres"
           :password "waffles"
           :stringtype "unspecified"})
 
+
 (defn box-insert [box]
   (try
-    (sql/insert! pg "box" box)
+    (let [db-box (first (sql/insert! pg "box" (dissoc box :project)))]
+      (map (partial anxiety-insert db-box) (:project box)))
     (catch Exception e e)))
 
 (defn box-select [email]
@@ -26,9 +28,9 @@
 (defn box-update [box]
   (sql/update! pg "box" (dissoc box :id) ["id=?" (:id box)]))
 
-(defn anxiety-insert [anxiety box]
+(defn anxiety-insert [box anxiety]
   (sql/insert! pg "anxiety"
-    (assoc anxiety {:box_id (:id box)})))
+    {:description (second anxiety) :box_id (:id box)}))
 
 (defn anxiety-update [anxiety box]
   (sql/insert! pg "anxiety"
@@ -54,8 +56,4 @@
 (defn boxes-for-update []
   (sql/query pg ["SELECT * from box where active=?" true]))
 
-; (defn get-boxes
-  
-
-; (box-select "ford@localhost")
 

@@ -40,7 +40,6 @@
 
 
 
-(defn send-emails [] (send-anxiety (data/box-select "ford@ftrain.com")))
 
 (defn handle-reply [reply] (prn {:response "OKAY" :reply reply}))
 

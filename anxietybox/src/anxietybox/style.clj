@@ -88,14 +88,15 @@
               { :font-size "12pt"
                :background "#ffe"
                :text-align "right"
-               :clear "both"
+                :clear "both"
                :font-family font
-               :font-weight 500
+               :font-weight "bold"
                :padding ".25em"
                :color "#777"}]
-             [:input.field:hover :input.field:focus
+             [:input.visited
               { :background "#fff"
-               :color "#333"
+                :color "#222"
+                :font-weight "bold"
                }]
              [:div#footer {:margin-top "20px" :text-align "center" :color "pink"}]
              [:div.submit-wrapper
