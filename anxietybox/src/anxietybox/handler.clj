@@ -25,9 +25,18 @@
 
 
 (def js "$(document).ready(function(){ 
+
 $('input.field').bind('focus click', function(s){ 
         $(this).addClass('visited');
-        $(this).attr('value','');}); 
+        $(this).attr('value','');
+}); 
+
+$('#submit').submit(function() {
+  $('div#anxieties-wrapper:last-child').delete();
+  console.log($(this));
+//  return true;
+ 
+});
 
 var no = 0;
 
@@ -46,11 +55,11 @@ function form() {
          $(this).attr('value',''); 
          if ($(this).is(':last-child')) form();}));}
 form();
-});")
-
-
+});
+")
 (defn make-page [title body]
   (html/html
+
    [:html
     [:head
      [:script {:src "//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"}]
@@ -100,7 +109,7 @@ form();
                        [:div#anxieties-wrapper]
                        [:div.gloss "Finishing my book. Managing my eating. Responding to email."]]
                      [:div.submit-wrapper
-                       [:input.submit {:type "submit" :value "Click here to start!"}]]]
+                       [:input#submit.submit {:type "submit" :value "Click here to start!"}]]]
                      ])))
 
   (POST "/" {params :params}
@@ -157,7 +166,7 @@ form();
     {:headers {"Content-Type" "application/json;charset=UTF-8"}
       :body (map mail/send-anxiety (data/boxes-for-update))})
   
-  (POST "/reply" {params :params}
+  (POST "/receive" {params :params}
         {:headers {"Content-Type" "application/json;charset=UTF-8"}
          :body  (cheshire/generate-string (mail/handle-reply params))})
 

@@ -14,6 +14,9 @@
           :password "waffles"
           :stringtype "unspecified"})
 
+(defn anxiety-insert [box anxiety]
+  (sql/insert! pg "anxiety"
+    {:description (second anxiety) :box_id (:id box)}))
 
 (defn box-insert [box]
   (try
@@ -27,10 +30,6 @@
 
 (defn box-update [box]
   (sql/update! pg "box" (dissoc box :id) ["id=?" (:id box)]))
-
-(defn anxiety-insert [box anxiety]
-  (sql/insert! pg "anxiety"
-    {:description (second anxiety) :box_id (:id box)}))
 
 (defn anxiety-update [anxiety box]
   (sql/insert! pg "anxiety"
