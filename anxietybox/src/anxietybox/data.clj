@@ -15,14 +15,12 @@
           :stringtype "unspecified"})
 
 (defn anxiety-insert [box anxiety]
-  (prn "ANXIETY-INSERT" box anxiety)  
   (sql/insert! pg "anxiety"
     {:description (second anxiety) :box_id (:id box)}))
 
 ;(box-delete (:confirm (box-select "ford@ftrain.com")))
 
 (defn box-insert [box]
-  (prn "BOX-INSERT" box)
   (try
     (let [db-box (first (sql/insert! pg "box" (dissoc box :project)))]
       (doall (map (partial anxiety-insert db-box) (:project box)))
@@ -36,7 +34,7 @@
   (let [box-id (:id (first (sql/query pg ["select id from box where confirm = ?" confirm])))]
     (sql/query pg ["select * from reply where box_id = ? ORDER BY created_time DESC" box-id])))
 
-(reply-select (:confirm (box-select "ford@ftrain.com")))
+;(reply-select (:confirm (box-select "ford@ftrain.com")))
 
 (defn anxiety-select [box]
   (vec (sql/query pg
