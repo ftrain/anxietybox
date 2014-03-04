@@ -22,7 +22,7 @@
   (try
     (let [db-box (first (sql/insert! pg "box" (dissoc box :project)))]
       (do 
-        (m3Aap (partial anxiety-insert db-box) (:project box))
+        (map (partial anxiety-insert db-box) (:project box))
         db-box))
     (catch Exception e e)))
 
