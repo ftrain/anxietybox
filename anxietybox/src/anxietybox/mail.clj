@@ -19,6 +19,8 @@
       :form-params (merge {:from from-email} form)}))
 
 (defn send-confirmation [box]
+  (prn box)
+
   (mailgun-send { :to (:email box)
           :subject "Confirmation requested"
           :text (str "Dear " (:name box) ",
@@ -42,12 +44,13 @@
                   (:description (rand-nth (:anxieties box)))
                   ".\" Which got me thinking. One of the things I've learned from knowing you is that: "
                   (bot/ps)
-                  " Just something to contemplate."
-                  "\n\nClick here to delete your account:"
+                  "\n\nJust something to contemplate."
+                  closing
+                  "\n\nP.S. Click here to delete your account:"
                   "\n\thttp://anxietybox.com/delete/"
                   (:confirm box) 
-                  "\n\nYou can start a new account any time)."
-                  closing)}))
+                  "\nYou can start a new account any time."
+                  )}))
 
 
 

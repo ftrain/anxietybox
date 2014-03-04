@@ -34,9 +34,7 @@ $('input.field').bind('focus click', function(s){
 
 $('#submit').submit(function() {
   $('div#anxieties-wrapper:last-child').delete();
-  console.log($(this));
-//  return true;
- 
+  return true;
 });
 
 var no = 0;
@@ -105,7 +103,7 @@ form();
                        [:h3 "email address"]                       
                        [:input.field {:type "text" :value "your@email.com" :name "email"}]
                        [:div.gloss "Don't worry, every email you get has a link that lets you delete your account."]
-                       [:h3 "anxiety stops my efforts to"]
+                       [:h3 "anxiety won't let me"]
 
                        [:div#anxieties-wrapper]
                        [:div.gloss "Finishing my book. Managing my eating. Responding to email."]]

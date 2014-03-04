@@ -15,15 +15,18 @@
           :stringtype "unspecified"})
 
 (defn anxiety-insert [box anxiety]
+  (prn "ANXIETY-INSERT" box anxiety)  
   (sql/insert! pg "anxiety"
     {:description (second anxiety) :box_id (:id box)}))
 
+;(box-delete (:confirm (box-select "ford@ftrain.com")))
+
 (defn box-insert [box]
+  (prn "BOX-INSERT" box)
   (try
     (let [db-box (first (sql/insert! pg "box" (dissoc box :project)))]
-      (do 
-        (map (partial anxiety-insert db-box) (:project box))
-        db-box))
+      (doall (map (partial anxiety-insert db-box) (:project box)))
+      db-box)
     (catch Exception e e)))
 
 (defn reply-insert [reply]
@@ -38,6 +41,7 @@
 (defn anxiety-select [box]
   (vec (sql/query pg
     ["select * from anxiety where box_id = ?" (:id box)])))
+
 
 (defn box-select
   "Fetch a full record for a box.
@@ -82,6 +86,10 @@ lower(email) = lower(?)" email]))]
   [code]
   (sql/delete! pg "box" ["confirm=?" code]))
 
-(defn boxes-for-update []
-  (sql/query pg ["SELECT * from box where active=?" true]))
+(defn anxiety-enhance [box]
+  (merge box {:anxieties (anxiety-select box)}))
 
+(defn boxes-for-update []
+  (map anxiety-enhance (sql/query pg ["SELECT * from box where active=?" true])))
+
+;(boxes-for-update)
