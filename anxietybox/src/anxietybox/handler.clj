@@ -159,6 +159,10 @@ form();
                 (if (= 1 res) "Your account was deleted"
                   "Error: That confirmation has expired.")]])))))
 
+  (GET "/responses" []
+    {:headers {"Content-Type" "application/json;charset=UTF-8"}
+      :body  (cheshire/generate-string {:statements (take 10 (repeatedly bot/ps))})})
+
   (GET "/bot" []
     {:headers {"Content-Type" "application/json;charset=UTF-8"}
       :body  (cheshire/generate-string {:statements (take 10 (repeatedly bot/ps))})})
@@ -167,11 +171,16 @@ form();
     {:headers {"Content-Type" "application/json;charset=UTF-8"}
       :body (map mail/send-anxiety (data/boxes-for-update))})
   
-  (POST "/receive" {params :params}
-        {:headers {"Content-Type" "application/json;charset=UTF-8"}
-         :body  (cheshire/generate-string (mail/handle-reply params))})
+  (GET "/receive" {params :params} (cheshire/generate-string {:params params}))
 
-  
+  ; Receives mailgun posts
+  (POST "/receive" {params :params} 
+        {:headers {"Content-Type" "application/json;charset=UTF-8"}
+         :body  (cheshire/generate-string
+                 (do (data/reply-insert 
+                      {:box_id (:id (data/box-select (:sender params)))
+                       :description (:stripped-text params)})))})
+
   (route/resources "/")
   (route/not-found "Not Found"))
 

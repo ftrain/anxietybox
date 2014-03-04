@@ -24,6 +24,15 @@
       (map (partial anxiety-insert db-box) (:project box)))
     (catch Exception e e)))
 
+(defn reply-insert [reply]
+  (sql/insert! pg "reply" reply))
+
+(defn reply-select [confirm]
+  (let [box-id (:id (first (sql/query pg ["select id from box where confirm = ?" confirm])))]
+    (sql/query pg ["select * from reply where box_id = ? ORDER BY created_time DESC" box-id])))
+
+(reply-select (:confirm (box-select "ford@ftrain.com")))
+
 (defn anxiety-select [box]
   (vec (sql/query pg
     ["select * from anxiety where box_id = ?" (:id box)])))
@@ -73,5 +82,4 @@ lower(email) = lower(?)" email]))]
 
 (defn boxes-for-update []
   (sql/query pg ["SELECT * from box where active=?" true]))
-
 
