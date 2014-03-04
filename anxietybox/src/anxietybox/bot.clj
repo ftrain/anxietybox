@@ -135,7 +135,7 @@
                   "i don't agree with all of the people who say that you are"
                   "your mother always worried that you would turn out"
                   "if your grandparents were here right now they'd tell you that you are"
-                  "people on Facebook look at your picture and thinks:"
+                  "people on Facebook look at your picture and think:"
                   "the minute you got in the cab your cab driver thought: I'm"
                   "it's a shame that people have painted you as"
                   "it's too bad everyone has decided you are"
