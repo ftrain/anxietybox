@@ -38,9 +38,11 @@
   (mailgun-send { :to (:email box)
           :subject (bot/ps)
           :text (str "Dear " (:name box) ",  
-\nI was thinking about what you said, that you were \"worried about "
+\nI was thinking about what you said, that you were \"worried that you can "
                   (:description (rand-nth (:anxieties box)))
-                  ".\" And honestly that makes sense; you probably will never make any progress along those lines. I mean, when have you ever really made progress on anything? Which got me thinking. One of the things I've learned from knowing you is that: "
+                  ".\" And honestly that makes sense; you probably will never make any progress along those lines. I mean, when have you ever really made progress on anything?"
+
+                  "\n\nWhich got me thinking. One of the things I've learned from knowing you is that: "
                   (bot/ps)
                   "\n\nJust something to contemplate."
                   closing
