@@ -37,20 +37,17 @@
 (defn send-anxiety [box]
   (mailgun-send { :to (:email box)
           :subject (bot/ps)
-          :text (str "Dear " (:name box) ",  
-\nI was thinking about what you said, that you were \"worried that you can "
-                  (:description (rand-nth (:anxieties box)))
-                  ".\" And honestly that makes sense; you probably will never make any progress along those lines. I mean, when have you ever really made progress on anything?"
+          :text (str "Dear " (:name box) ",\n\n"
+                     (bot/compose (:description (rand-nth (:anxieties box))))
+                     closing
+                     "\n\nP.S. Click here to delete your account:"
+                     "\n\thttp://anxietybox.com/delete/"
+                     (:confirm box) 
+                     "\nYou can start a new account any time."
+                     )}))
 
-                  "\n\nWhich got me thinking. One of the things I've learned from knowing you is that: "
-                  (bot/ps)
-                  "\n\nJust something to contemplate."
-                  closing
-                  "\n\nP.S. Click here to delete your account:"
-                  "\n\thttp://anxietybox.com/delete/"
-                  (:confirm box) 
-                  "\nYou can start a new account any time."
-                  )}))
+
+;(send-anxiety (data/box-select "ford@ftrain.com"))
 
 
 

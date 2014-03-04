@@ -2,6 +2,95 @@
   (:require
     [clojure.string :as string]))
 
+(def interrogatories [
+                      "a lot of people have done this already."
+                      "a lot of the people who succeed here are pretty awful people, so it's better that you don't even try."
+                      "can you handle the rejection if you do this?"
+                      "do you think anyone will ever take you seriously if you try this?"
+                      "don't over-index on success here. Because it might not happen."
+                      "have you ever finished anything?"
+                      "have you ever made progress on something like that?"
+                      "have you ever made something like this work?"
+                      "I don't know. Can you do any part of this? Even a small part?"
+                      "I don't meant to second-guess you."
+                      "I don't want to doubt you, but..."
+                      "I doubt it can ever work."
+                      "I doubt you can think of a place to get started, can you?"
+                      "I doubt you'll make progress here."
+                      "I have no idea what success would look like here, well, except that this is obviously not success."
+                      "I mean shouldn't it be done by now?"
+                      "I'd love to see you prove me wrong here."
+                      "I'm guessing this all feels beyond you, which is normal for people who are risking everything without any real strategy."
+                      "Is there anything you can do to keep this from being a total disaster?"
+                      "we all acknowledge it's a long shot for you even to attempt this."
+                      "let's be honest, your track record is pretty weak."
+                      "maybe it's better to just put all of this behind you?"
+                      "there's no chance you can pull this off, is there?"
+                      "let's just hope that past results don't equal future success."
+                      "well, where's probably too much attention in life paid to actually doing things, don't you think?"
+                      "this problem is a barrier to success, but you can't have it all."
+                      "where would you put your chances for success? Zero percent? Greater?"
+                      "you might just want to give yourself credit for good intentions."
+                      "you probably are used to being at the front of the class, and this is a wake-up call that you're not even in the middle."
+                      "you'll probably just screw it up, right?"
+                      "you're probably putting too much pressure on yourself to do something good."
+                      "you're ready to buckle down, maybe. so that's good. If you do it."
+                      "you should at least try."
+])
+
+(def offers [
+             "In saying"
+             "Telling people about how you're going to"
+             "Offering that you're going to"
+             "Insisting you can"
+             "Demanding people believe you when you say that you will"
+             "Being so sure you can"
+             "Telling yourself that soon you are going to"
+             "Being the guy who always says you will"
+             ])
+(def contemplatives
+  ["I was thinking about your attempts to"
+   "Let's talk about where you are at with your desire to"
+   "A moment to talk about how you want to"
+   "Just checking in talk about your thing where you"
+   "Wondering about the status with your project to"
+   "I don't know if you were serious when you said you wanted to"
+   "I want to think about your plan to"
+   "I heard you when you talked about how you wanted to"
+   "So you want to"
+   "You're finally ready to"
+   "After what seems like forever you want to"
+   "You wake up today and you're expecting to"
+   "People are expecting you to"
+   "So everyone is really curious to see if you can"
+   "We were all talking about how you want to"
+   "I understand that it is your goal to"])
+
+(def returns ["Anyway,"
+               "So basically,"
+               "what it comes down to is,"
+               "what I want to know is,"
+               "essentially,"
+               "okay so"
+               "the upshot is"
+               "the question that matters is: "
+               "can you tell me: "
+               "are you ready to answer: "
+               "look at it like this:"
+               "consider--"
+               "reflect: "
+               "let me know: "
+               "inform me: "])
+
+(def call-to-action [
+                     "what do you think?"
+                     "what is your take?"
+                     "can you do any of this?"
+                     "are you ready?"
+                     "will you even try?"
+                     "is this another one of your \"things\"?"
+                     "will you be able to change everyone's minds?"])
+
 (def indicators ["all signs point to you being"
                   "You:"
                   "Your issues in a nutshell: you're"
@@ -73,11 +162,12 @@
               :appearance ["ugly" "hideous" "misshapen" "awkward" "oddly-proportioned" "weird" "strange" "repulsive" "monstrish" "disgusting" "smelly" "weird-faced" "unsexy" "untouchable" "crooked" "in posession of a weird nose" "undesirable" "strangely repulsive" "unkempt" "slobby" "weird-nosed" "sneaky-looking"]
               })
 
+
+
 (def project
   {:failure ["waste of time" "stupid" "meaningless" "pointless" "empty"]})
 
 (def person-keys (keys person))
-
 
 (defn andjoin [s]
   (str (string/join ", " (butlast s))
@@ -91,8 +181,11 @@
              (take (+ 1 (rand-int 2)) (repeatedly
                        (fn [] (rand-nth ((rand-nth k) m))))))))
 
+(defn ucfirst [s]
+  (apply str (concat (string/upper-case (first s)) (rest s))))
+
 (defn sentence [s]
-  (apply str (concat (string/upper-case (first s)) (rest s) ".")))
+  (apply str (ucfirst s) "."))
 
 (defn indicator []
   (rand-nth indicators))
@@ -103,5 +196,31 @@
 (defn ps []
   (sentence (apply str (indicator) " " (description))))
 
+(defn change-tense [anxiety]
+  (string/replace anxiety #"my" "your"))
+
+(defn compose [anxiety]
+  (str 
+   (sentence (str (rand-nth contemplatives)
+                  " "
+                  (change-tense anxiety)))
+   "\n\n"
+   (ucfirst (rand-nth interrogatories))
+   " "
+   (rand-nth offers)
+   " \""
+   anxiety
+   "\"--"
+   (rand-nth interrogatories)
+   " ("
+   (ps)
+   ") "
+   (ucfirst (rand-nth returns))
+   " "
+   (rand-nth interrogatories)
+   " "
+   (ucfirst (rand-nth returns))
+   " "
+   (rand-nth call-to-action)))
 
 
