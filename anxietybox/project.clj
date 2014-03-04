@@ -7,8 +7,8 @@
                   [enlive "1.1.5"]
                   [postgresql/postgresql "8.4-702.jdbc4"]
                   [hiccup "1.0.5"]
-                  [garden "1.1.5"]                  
-                  [clojurewerkz/mailer "1.0.0"]
+                  [garden "1.1.5"]
+                  [clj-http "0.9.0"]
                   [cheshire "5.3.1"]                  
                   [com.taoensso/timbre "3.0.1"]
                                         ; project.clj

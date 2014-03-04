@@ -24,9 +24,28 @@
       (map (partial anxiety-insert db-box) (:project box)))
     (catch Exception e e)))
 
-(defn box-select [email]
-  (first (sql/query pg
-           ["select * from box where lower(email) = lower(?)" email])))
+(defn anxiety-select [box]
+  (vec (sql/query pg
+    ["select * from anxiety where box_id = ?" (:id box)])))
+
+(defn box-select
+  "Fetch a full record for a box.
+
+   (box-select \"ford@ftrain.com\")
+
+   => {:anxieties [{:description \"finishing my book\", :box_id
+   2, :id 1} {:description \"losing weight\", :box_id 2, :id 2}
+   {:description \"making friends\", :box_id 2, :id 3}], :active
+   true, :confirm #uuid
+   \"26ed5e80-ff88-424d-a57b-7e4359ad56bf\", :count 0, :email
+   \"ford@ftrain.com\", :name \"Paul\", :id 2, :created_time #inst
+   \"2014-03-01T11:55:39.631064000-00:00\"}"
+  
+  [email]
+  (let [box (first (sql/query pg ["select * from box where
+lower(email) = lower(?)" email]))]
+    (merge box {:anxieties (anxiety-select box)})))
+
 
 (defn box-update [box]
   (sql/update! pg "box" (dissoc box :id) ["id=?" (:id box)]))
