@@ -19,8 +19,6 @@
       :form-params (merge {:from from-email} form)}))
 
 (defn send-confirmation [box]
-  (prn box)
-
   (mailgun-send { :to (:email box)
           :subject "Confirmation requested"
           :text (str "Dear " (:name box) ",
