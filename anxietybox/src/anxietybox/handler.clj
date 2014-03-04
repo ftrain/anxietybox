@@ -41,7 +41,7 @@ $('#submit').submit(function() {
 
 var no = 0;
 
-anxieties = ['losing weight', 'eating right', 'making friends', 'finding love', 'answering email', 'getting intimate', 'going to school', 'asking for money', 'breaking up', 'meeting people', 'speaking in public', 'being honest', 'telling mom no'];
+anxieties = ['lose weight', 'eat right', 'make friends', 'find love', 'answer email', 'get intimate', 'go to school', 'ask for money', 'break up', 'meet people', 'speak in public', 'be honest', 'tell mom no'];
 
 function getAnxiety(num) {
   if (num > anxieties.length) {return \"that bad, huh?\"}
@@ -105,7 +105,7 @@ form();
                        [:h3 "email address"]                       
                        [:input.field {:type "text" :value "your@email.com" :name "email"}]
                        [:div.gloss "Don't worry, every email you get has a link that lets you delete your account."]
-                       [:h3 "anxiety keeps me from"]
+                       [:h3 "anxiety stops my efforts to"]
 
                        [:div#anxieties-wrapper]
                        [:div.gloss "Finishing my book. Managing my eating. Responding to email."]]
