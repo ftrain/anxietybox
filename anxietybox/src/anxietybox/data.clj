@@ -21,7 +21,9 @@
 (defn box-insert [box]
   (try
     (let [db-box (first (sql/insert! pg "box" (dissoc box :project)))]
-      (map (partial anxiety-insert db-box) (:project box)))
+      (do 
+        (m3Aap (partial anxiety-insert db-box) (:project box))
+        db-box))
     (catch Exception e e)))
 
 (defn reply-insert [reply]
