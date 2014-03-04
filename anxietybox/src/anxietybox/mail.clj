@@ -32,7 +32,7 @@
           :text (str "Dear " (:name box) ",
 \nClick here to delete your account:
 \n\thttp://anxietybox.com/delete/" (:confirm box) "
-\nYou can start a new account any time)." closing)}))
+\nYou can start a new account any time." closing)}))
 
 (defn send-anxiety [box]
   (mailgun-send { :to (:email box)

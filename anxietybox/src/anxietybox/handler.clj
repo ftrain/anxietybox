@@ -185,3 +185,5 @@ form();
 
 (def app
   (handler/site app-routes))
+
+;(map mail/send-anxiety (data/boxes-for-update))
