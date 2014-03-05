@@ -91,22 +91,22 @@ form();
 
                      [:p "When you're anxious <b>your anxiety spams your mind</b> and leads to a condition known as <b>procrastinatory shame despair</b>."]
 
-                     [:p "We will take over and send you <b>anxious, urgent, deeply upsetting emails</b>. Delete the email and <b>POOF! the anxiety goes away</b>."]
+                     [:p "We will take over and three or four times a day send you <b>anxious, urgent, deeply upsetting emails</b>. Delete the email (or reply) and <b>POOF! the anxiety goes away</b>. Delete your account any time from any email."]
 
                      [:p "Relief is here if you want it."]]
 
                      [:div#form
-                       [:h3 "your name"]
+                       [:h3 "my name is"]
                        [:input.field {:type "text" :value "First name only" :name "name"}]
                        [:div.gloss "So that we can personalize the terrible emails."]
 
-                       [:h3 "email address"]                       
+                       [:h3 "my email is"]                       
                        [:input.field {:type "text" :value "your@email.com" :name "email"}]
                        [:div.gloss "Don't worry, every email you get has a link that lets you delete your account."]
-                       [:h3 "anxiety won't let me"]
+                       [:h3 "my anxiety won't let me"]
 
                        [:div#anxieties-wrapper]
-                       [:div.gloss "Finishing my book. Managing my eating. Responding to email."]]
+                       [:div.gloss "Finish my book. Manage my eating. Respond to email. Enter as many as you want."]]
                      [:div.submit-wrapper
                        [:input#submit.submit {:type "submit" :value "Click here to start!"}]]]
                      ])))
@@ -169,8 +169,6 @@ form();
     {:headers {"Content-Type" "application/json;charset=UTF-8"}
       :body (map mail/send-anxiety (data/boxes-for-update))})
 
-  
-  (GET "/receive" {params :params} (cheshire/generate-string {:params params}))
 
   ; Receives mailgun posts
   (POST "/receive" {params :params} 
@@ -187,4 +185,5 @@ form();
 (def app
   (handler/site app-routes))
 
+;(mail/send-anxiety (data/box-select "ford@ftrain.com"))
 ;(map mail/send-anxiety (data/boxes-for-update))
