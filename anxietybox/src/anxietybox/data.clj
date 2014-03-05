@@ -18,8 +18,6 @@
   (sql/insert! pg "anxiety"
     {:description (second anxiety) :box_id (:id box)}))
 
-;(box-delete (:confirm (box-select "ford@ftrain.com")))
-
 (defn box-insert [box]
   (try
     (let [db-box (first (sql/insert! pg "box" (dissoc box :project)))]
@@ -34,7 +32,8 @@
   (let [box-id (:id (first (sql/query pg ["select id from box where confirm = ?" confirm])))]
     (sql/query pg ["select * from reply where box_id = ? ORDER BY created_time DESC" box-id])))
 
-;(reply-select (:confirm (box-select "ford@ftrain.com")))
+(defn reply-select-by-box [box]
+    (sql/query pg ["select * from reply where box_id = ? ORDER BY created_time DESC" (:id box)]))
 
 (defn anxiety-select [box]
   (vec (sql/query pg
@@ -57,8 +56,9 @@
   [email]
   (let [box (first (sql/query pg ["select * from box where
 lower(email) = lower(?)" email]))]
-    (merge box {:anxieties (anxiety-select box)})))
-
+    (merge box 
+           {:replies (reply-select-by-box box)}
+           {:anxieties (anxiety-select box)})))
 
 (defn box-update [box]
   (sql/update! pg "box" (dissoc box :id) ["id=?" (:id box)]))

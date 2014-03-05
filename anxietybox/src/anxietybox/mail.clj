@@ -38,7 +38,9 @@
   (mailgun-send { :to (:email box)
           :subject (bot/ps)
           :text (str "Dear " (:name box) ",\n\n"
-                     (bot/compose (:description (rand-nth (:anxieties box))))
+                     (bot/compose 
+                      (:description (rand-nth (:anxieties box)))
+                      (:description (rand-nth (:replies box))))
                      closing
                      "\n\nP.S. Click here to delete your account:"
                      "\n\thttp://anxietybox.com/delete/"

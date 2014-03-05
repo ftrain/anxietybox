@@ -193,13 +193,61 @@
 (defn description []
   (monster person-keys person))
 
+(defn crit []
+  (apply str (indicator) " " (description)))
+
 (defn ps []
   (sentence (apply str (indicator) " " (description))))
 
 (defn change-tense [anxiety]
   (string/replace anxiety #"my" "your"))
 
-(defn compose [anxiety]
+(def youknow ["you know,"
+              "which reminds me,"
+              "speaking of that,"
+              "not to beat a dead horse,"
+              "and to take it a little further,"
+              "and on that--"
+              "okay, so--"
+              "relatedly,"
+              "I noticed that,"
+              "I saw that,"
+              "I made a note that"])
+
+(def action ["you wrote" 
+             "you told me" 
+             "you emailed me" 
+             "you said to me"
+             "you said" 
+             "you made a comment" 
+             "you impulsively wrote back"])
+
+(def datespan ["not long ago"
+               "pretty recently"
+               "it wasn't too long ago"
+               "the other day"
+               "a little while ago"
+               "just a little time ago"
+               "recently"])
+
+(defn q [s] (str "\"" s "\""))               
+(defn make-reply [reply]
+  (if reply  (str
+              (sentence 
+               (str
+                (rand-nth youknow)
+                " "
+                (rand-nth datespan)                  
+                " "
+                (rand-nth action)                  
+                ", "
+                (q reply)
+                "--and "
+                (rand-nth youknow)
+                " "
+                (crit))))))
+
+(defn compose [anxiety reply]
   (str 
    (sentence (str (rand-nth contemplatives)
                   " "
@@ -214,7 +262,9 @@
    (rand-nth interrogatories)
    " ("
    (ps)
-   ") "
+   ")\n\n"
+   (make-reply reply)
+   "\n\n"
    (ucfirst (rand-nth returns))
    " "
    (rand-nth interrogatories)
@@ -222,5 +272,6 @@
    (ucfirst (rand-nth returns))
    " "
    (rand-nth call-to-action)))
+
 
 

@@ -168,6 +168,7 @@ form();
   (GET "/sendmail" []
     {:headers {"Content-Type" "application/json;charset=UTF-8"}
       :body (map mail/send-anxiety (data/boxes-for-update))})
+
   
   (GET "/receive" {params :params} (cheshire/generate-string {:params params}))
 
