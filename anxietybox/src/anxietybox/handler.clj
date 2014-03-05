@@ -175,12 +175,16 @@ form();
         {:headers {"Content-Type" "application/json;charset=UTF-8"}
          :body  (cheshire/generate-string
                  (do (data/reply-insert 
-                      {:box_id (:id (data/box-select (:sender params)))
+                      {:box_id 
+                       (:id  (let [box (data/box-select (:sender params))]
+                               (if box box 
+                                   (let [conf
+                                         (drop 1 (re-find #"/delete/([\S\"]+)" (:body-plain params)))]
+                                     (if conf (data/box-select-by-confirm (first conf)))))))
                        :description (:stripped-text params)})))})
 
   (route/resources "/")
   (route/not-found "Not Found"))
-
 
 (def app
   (handler/site app-routes))
