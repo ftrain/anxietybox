@@ -39,6 +39,10 @@
   (vec (sql/query pg
     ["select * from anxiety where box_id = ?" (:id box)])))
 
+(defn box-select-by-confirm [confirm]
+  (first (sql/query ["select * from box where confirm=?" confirm])))
+
+
 
 (defn box-select
   "Fetch a full record for a box.

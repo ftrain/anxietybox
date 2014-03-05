@@ -73,12 +73,19 @@
                "essentially,"
                "okay so"
                "the upshot is"
-               "the question that matters is: "
+               "the thing that matters is:"
+               "the fact to not here is,"
                "can you tell me: "
                "are you ready to answer: "
                "look at it like this:"
                "consider--"
-               "reflect: "
+               "reflect:"
+               "tell me,"
+               "drop a line,"
+               "keep me in the loop,"
+               "I'm curious,"
+               "I'd be interested in hearing your take,"
+               "I'm all ears--"
                "let me know: "
                "inform me: "])
 
@@ -159,13 +166,42 @@
     to the task" "barely tolerable" "deservedly alone" "so easily forgotten" "likely to die soon" "diseased-looking" "at risk of a fatal disease" "a burden on others" "awkward" "socially weird" "hard to talk with"]
               :loathing
               ["poison" "wasteful" "fraudulent"  "like garbage" "cheesy" "fake" "unworthy of saving" "irredeemable" "phony" "faux-intelligent" "a liar" "a cheater" "deviant" "cretinous" "evil-looking" "awful" "unsightly" "unloveable" "lazy" "stupid" "devoid of willpower" "unambitious" "third-rate" "z-list" "boring" "exhausting to know" "predictable" "whiny" "needy"]
-              :appearance ["ugly" "hideous" "misshapen" "awkward" "oddly-proportioned" "weird" "strange" "repulsive" "monstrish" "disgusting" "smelly" "weird-faced" "unsexy" "untouchable" "crooked" "in posession of a weird nose" "undesirable" "strangely repulsive" "unkempt" "slobby" "weird-nosed" "sneaky-looking"]
+              :appearance ["ugly" "hideous" "misshapen" "awkward" "oddly-proportioned" "weird" "strange" "repulsive" "monstrish" "disgusting" "weird-faced" "unsexy" "untouchable" "crooked" "in posession of a weird nose" "undesirable" "strangely repulsive" "unkempt" "slobby" "weird-nosed" "sneaky-looking"]
               })
 
 
 
 (def project
   {:failure ["waste of time" "stupid" "meaningless" "pointless" "empty"]})
+
+(def youknow ["you know,"
+              "which reminds me,"
+              "speaking of that,"
+              "not to beat a dead horse,"
+              "and to take it a little further,"
+              "and on that--"
+              "okay, so--"
+              "relatedly,"
+              "I noticed that,"
+              "I saw that,"
+              "I made a note that"])
+
+(def action ["you wrote" 
+             "you told me" 
+             "you emailed me" 
+             "you said to me"
+             "you said" 
+             "you made a comment" 
+             "you impulsively wrote back"])
+
+(def datespan ["not long ago"
+               "pretty recently"
+               "it wasn't too long ago"
+               "the other day"
+               "a little while ago"
+               "just a little time ago"
+               "recently"])
+
 
 (def person-keys (keys person))
 
@@ -201,38 +237,10 @@
 
 (defn change-tense [anxiety]
   (string/replace anxiety #"my" "your"))
-
-(def youknow ["you know,"
-              "which reminds me,"
-              "speaking of that,"
-              "not to beat a dead horse,"
-              "and to take it a little further,"
-              "and on that--"
-              "okay, so--"
-              "relatedly,"
-              "I noticed that,"
-              "I saw that,"
-              "I made a note that"])
-
-(def action ["you wrote" 
-             "you told me" 
-             "you emailed me" 
-             "you said to me"
-             "you said" 
-             "you made a comment" 
-             "you impulsively wrote back"])
-
-(def datespan ["not long ago"
-               "pretty recently"
-               "it wasn't too long ago"
-               "the other day"
-               "a little while ago"
-               "just a little time ago"
-               "recently"])
-
 (defn q [s] (str "\"" s "\""))               
 (defn make-reply [reply]
   (if reply  (str
+              "\n\n"
               (sentence 
                (str
                 (rand-nth youknow)
@@ -245,7 +253,8 @@
                 "--and "
                 (rand-nth youknow)
                 " "
-                (crit))))))
+                (crit)))
+              " ")))
 
 (defn compose [anxiety reply]
   (str 
@@ -260,11 +269,7 @@
    anxiety
    "\"--"
    (rand-nth interrogatories)
-   " ("
-   (ps)
-   ")\n\n"
    (make-reply reply)
-   "\n\n"
    (ucfirst (rand-nth returns))
    " "
    (rand-nth interrogatories)
@@ -272,6 +277,7 @@
    (ucfirst (rand-nth returns))
    " "
    (rand-nth call-to-action)))
+
 
 
 
