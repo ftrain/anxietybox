@@ -13,8 +13,24 @@
 
 
 (def site-prefix "http://localhost:3000/")
-  
-(defn check-params [params]
+
+(defn nest
+  "Take a key-value map and nest it by splitting on dashes.
+
+   (nest {:type \"Student\" :name-first \"John\" :name-last
+   \"Doe\" :class-1 \"English\" :class-2 \"Biology\" :class-3
+   \"Gym\"})
+
+   => {:type \"Student\", :class {:3 \"Gym\", :2 \"Biology\", :1
+   \"English\"}, :name {:first \"John\", :last \"Doe\"}}"
+  [params]
+  (reduce (fn [m [ks v]] (assoc-in m ks v)) {}
+        (map (fn [[k v]]
+               (list (map keyword (string/split (name k) #"-")) v)) params)))
+
+(defn check-params
+  "A dumb parameter checker."
+  [params]
   (filter identity
     (list
            (if (= (:project-0 params) "") "You need to put something in the anxiety box.")
@@ -39,7 +55,7 @@ $('#submit').submit(function() {
 
 var no = 0;
 
-anxieties = ['lose weight', 'eat right', 'make friends', 'find love', 'answer email', 'get intimate', 'go to school', 'ask for money', 'break up', 'meet people', 'speak in public', 'be honest', 'tell mom no'];
+var anxieties = ['lose weight', 'eat right', 'make friends', 'find love', 'answer email', 'get intimate', 'go to school', 'ask for money', 'break up', 'meet people', 'speak in public', 'be honest', 'tell mom no'];
 
 function getAnxiety(num) {
   if (num > anxieties.length) {return \"that bad, huh?\"}
@@ -71,26 +87,19 @@ form();
      [:div#footer "An anxiety simulator. &copy;2014 " [:a {:href "http://twitter.com/ftrain"} "Paul Ford."] " All rights reserved. "]
      ]]))
 
-(defn nest [params]
-  (reduce (fn [m [ks v]] (assoc-in m ks v)) {}
-        (map (fn [[k v]]
-               (list (map keyword (string/split (name k) #"-")) v)) params)))
-
-(defroutes app-routes
-
-  (GET "/" []
-    (make-page "Anxiety Box"
-      (html/html [:div#main
-                   [:h1 "What’s in Your" [:br] [:span.sitename "Anxiety Box?"] ]
-                   [:h2#quote "&ldquo;" (bot/ps) "&rdquo;" [:nobr [:i "&mdash;" [:a {:href "http://twitter.com/anxietyboxbot"} "@anxietyboxbot" ]]]]
-
-                   [:form {:id "signup" :method "post" :action "/"}
-
+(defn make-home [& params]
+  (make-page "Anxiety Box"
+    (html/html [:div#main
+                 [:h1 "What’s in Your" [:br] [:span.sitename "Anxiety Box?"] ]
+                 [:h2#quote "&ldquo;" (bot/ps) "&rdquo;" [:nobr [:i "&mdash;" [:a {:href "http://twitter.com/anxietyboxbot"} "@anxietyboxbot" ]]]]
+                 
+                 [:form {:id "signup" :method "post" :action "/"}
+                   
                    [:div#info
                      [:p "Stop making yourself anxious&mdash;that's our job! <b>Fill out the form to the left and leave your anxiety with us.</b>"]
-
+                     
                      [:p "When you're anxious <b>your anxiety spams your mind</b> and leads to a condition known as <b>procrastinatory shame despair</b>."]
-
+                     
                      [:p "We will take over and three or four times a day send you <b>anxious, urgent, deeply upsetting emails</b>. Delete the email (or reply) and <b>POOF! the anxiety goes away</b>. Delete your account any time from any email."]
 
                      [:p "Relief is here if you want it."]]
@@ -110,6 +119,10 @@ form();
                      [:div.submit-wrapper
                        [:input#submit.submit {:type "submit" :value "Click here to start!"}]]]
                      ])))
+(defroutes app-routes
+
+  (GET "/" [] (make-home))
+
 
   (POST "/" {params :params}
     (let [errors (check-params params)
