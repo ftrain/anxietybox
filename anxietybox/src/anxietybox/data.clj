@@ -1,6 +1,14 @@
 (ns anxietybox.data
   (:require
+    [environ.core :as env]
+    [taoensso.timbre :as timbre]    
     [clojure.java.jdbc :as sql]))
+
+;; Logging prefix
+(timbre/refer-timbre)
+(timbre/set-config! [:appenders :spit :enabled?] true)
+(timbre/set-config! [:shared-appender-config :spit-filename] (env/env :log-file))
+;;
 
 (defn uuid
   "Generate a UUID.
@@ -10,15 +18,19 @@
 
 (def pg {:subprotocol "postgresql"
           :subname "anxietybox"
-          :user "postgres"
-          :password "waffles"
+          :user (env/env :postgres-user)
+          :password (env/env :postgres-password)
           :stringtype "unspecified"})
 
-(defn anxiety-insert [box anxiety]
+(defn anxiety-insert
+  ""
+  [box anxiety]
   (sql/insert! pg "anxiety"
     {:description (second anxiety) :box_id (:id box)}))
 
-(defn box-insert [box]
+(defn box-insert
+  [box]
+  (log "[box]" box)
   (try
     (let [db-box (first (sql/insert! pg "box" (dissoc box :project)))]
       (doall (map (partial anxiety-insert db-box) (:project box)))
@@ -33,16 +45,24 @@
     (sql/query pg ["select * from reply where box_id = ? ORDER BY created_time DESC" box-id])))
 
 (defn reply-select-by-box [box]
-    (sql/query pg ["select * from reply where box_id = ? ORDER BY created_time DESC" (:id box)]))
+  (vec (sql/query pg ["select * from reply where box_id = ? ORDER BY created_time DESC" (:id box)])))
 
 (defn anxiety-select [box]
   (vec (sql/query pg
     ["select * from anxiety where box_id = ?" (:id box)])))
 
-(defn box-select-by-confirm [confirm]
-  (first (sql/query ["select * from box where confirm=?" confirm])))
+(defn box-relate [box]
+  (merge box 
+    {:replies (reply-select-by-box box)}
+    {:anxieties (anxiety-select box)}))
 
-
+(defn box-select-by-confirm
+  [confirm]
+  (prn confirm)
+  (box-relate
+    (first
+      (sql/query pg
+        ["select * from box where confirm=?" confirm]))))
 
 (defn box-select
   "Fetch a full record for a box.
@@ -58,11 +78,9 @@
    \"2014-03-01T11:55:39.631064000-00:00\"}"
   
   [email]
-  (let [box (first (sql/query pg ["select * from box where
-lower(email) = lower(?)" email]))]
-    (merge box 
-           {:replies (reply-select-by-box box)}
-           {:anxieties (anxiety-select box)})))
+  (box-relate (first (sql/query pg ["select * from box where lower(email) = lower(?)" email]))))
+
+
 
 (defn box-update [box]
   (sql/update! pg "box" (dissoc box :id) ["id=?" (:id box)]))
