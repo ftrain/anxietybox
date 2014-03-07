@@ -1,9 +1,16 @@
 (ns anxietybox.mail
   (:require
+    [environ.core :as env]    
+    [taoensso.timbre :as timbre]    
     [anxietybox.bot :as bot]    
     [clj-http.client :as client]))
 
-(def mailgun-auth ["api" "key-1w1ratgi9abb687pcc1v-nrfo3akfgj6"])
+(timbre/refer-timbre)
+(timbre/set-config! [:appenders :spit :enabled?] true)
+(timbre/set-config! [:shared-appender-config :spit-filename] "/Users/ford/Desktop/logs/clojure.log")
+
+
+(def mailgun-auth ["api" (env/env :mailgun-api-key)])
 ;(def mailgun-site "sandbox19441.mailgun.org")
 (def mailgun-site "anxietybox.com")
 (def mailgun-uri (str "https://api.mailgun.net/v2/" mailgun-site "/messages"))
@@ -13,12 +20,16 @@
 (defn mailgun-send 
   "Post an email to the mailgun gateway."
   [form]
+  (info form)
   (client/post mailgun-uri
     {:basic-auth mailgun-auth
       :throw-entire-message? true
       :form-params (merge {:from from-email} form)}))
 
-(defn send-confirmation [box]
+(defn send-confirmation
+  ""
+  [box]
+  (info box)
   (mailgun-send { :to (:email box)
           :subject "Confirmation requested"
           :text (str "Dear " (:name box) ",
@@ -34,19 +45,26 @@
 \n\thttp://anxietybox.com/delete/" (:confirm box) "
 \nYou can start a new account any time." closing)}))
 
+(defn anxiety-text [box]
+  (str "Dear " (:name box) ",\n\n"
+    (bot/compose 
+      (if (:anxieties box) (:description (rand-nth (:anxieties box))))
+      (if (:reply box) (:description (rand-nth (:replies box)))))
+    closing
+    "\n\nP.S. Click here to delete your account:"
+    "\n\thttp://anxietybox.com/delete/"
+    (:confirm box) 
+    "\nYou can start a new account any time."
+    ))
+
+(def box (anxietybox.data/box-select "ford@ftrain.com"))
+(anxiety-text box)
+
+
 (defn send-anxiety [box]
   (mailgun-send { :to (:email box)
           :subject (bot/ps)
-          :text (str "Dear " (:name box) ",\n\n"
-                     (bot/compose 
-                      (:description (rand-nth (:anxieties box)))
-                      (:description (rand-nth (:replies box))))
-                     closing
-                     "\n\nP.S. Click here to delete your account:"
-                     "\n\thttp://anxietybox.com/delete/"
-                     (:confirm box) 
-                     "\nYou can start a new account any time."
-                     )}))
+          :text (anxiety-text box)}))
 
 
 ;(send-anxiety (data/box-select "ford@ftrain.com"))
