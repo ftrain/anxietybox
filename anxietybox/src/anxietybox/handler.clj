@@ -1,6 +1,7 @@
 (ns anxietybox.handler
   (:use compojure.core)
   (:require
+    [taoensso.timbre :as timbre]    
     [anxietybox.data :as data]
     [anxietybox.style :as style] 
     [anxietybox.bot :as bot]
@@ -10,6 +11,11 @@
     [compojure.route :as route]
     [cheshire.core :as cheshire]    
     [hiccup.core :as html]))
+
+;; Logging prefix
+(timbre/refer-timbre)
+(timbre/set-config! [:appenders :spit :enabled?] true)
+(timbre/set-config! [:shared-appender-config :spit-filename] (env/env :log-file))
 
 
 (def site-prefix "http://localhost:3000/")
@@ -41,7 +47,16 @@
            (if (not (:email params)) "No email."))))
 
 
-(def js "$(document).ready(function(){ 
+(defn make-js
+  "TK"
+  [& params]
+(str "$(document).ready(function(){ 
+
+var values=
+"
+  (if (ffirst params) (cheshire/generate-string ((comp first first first) params) {:pretty true}) {})
+  
+  ";
 
 $('input.field').bind('focus click', function(s){ 
         $(this).addClass('visited');
@@ -71,65 +86,87 @@ function form() {
          if ($(this).is(':last-child')) form();}));}
 form();
 });
-")
-(defn make-page [title body]
-  (html/html
+"))
 
+(defn make-page
+  "Make an HTML page"
+  [title body & params]
+  (html/html
    [:html
     [:head
-     [:script {:src "//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"}]
-     [:script js]
+      [:script {:src "//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"}]
+      [:style {:type "text/css"} style/css]      
+      [:script (make-js params)]
      [:link {:href "http://fonts.googleapis.com/css?family=Gentium+Basic:400,400italic,700,700italic|Alfa+Slab+One|Akronim" :rel "stylesheet" :type "text/css"}] 
      [:meta {:type "charset"}]
      [:title title]
-     [:style {:type "text/css"} style/css]]
-    [:body body
-     [:div#footer "An anxiety simulator. &copy;2014 " [:a {:href "http://twitter.com/ftrain"} "Paul Ford."] " All rights reserved. "]
-     ]]))
+      [:body body
+        [:div#footer "An anxiety simulator. &copy;2014 "
+          [:a {:href "http://twitter.com/ftrain"} "Paul Ford."]
+          " All rights reserved. "]]]]))
 
 (defn make-home [& params]
   (make-page "Anxiety Box"
     (html/html [:div#main
                  [:h1 "What’s in Your" [:br] [:span.sitename "Anxiety Box?"] ]
-                 [:h2#quote "&ldquo;" (bot/ps) "&rdquo;" [:nobr [:i "&mdash;" [:a {:href "http://twitter.com/anxietyboxbot"} "@anxietyboxbot" ]]]]
-                 
-                 [:form {:id "signup" :method "post" :action "/"}
-                   
+                 [:h2#quote "&ldquo;"
+                   (bot/ps)
+                   "&rdquo;"
+                   [:nobr
+                     [:i "&mdash;"
+                       [:a
+                         {:href "http://twitter.com/anxietyboxbot"}
+                         "@anxietyboxbot" ]]]]
+                 [:form
+                   {:id "signup" :method "post" :action "/"}
                    [:div#info
-                     [:p "Stop making yourself anxious&mdash;that's our job! <b>Fill out the form to the left and leave your anxiety with us.</b>"]
+                     [:p "Stop making yourself anxious&mdash;that's
+                     our job! <b>Fill out the form to the left and
+                     leave your anxiety with us.</b>"]
                      
-                     [:p "When you're anxious <b>your anxiety spams your mind</b> and leads to a condition known as <b>procrastinatory shame despair</b>."]
+                     [:p "When you're anxious <b>your anxiety spams
+                     your mind</b> and leads to a condition known as
+                     <b>procrastinatory shame despair</b>."]
                      
-                     [:p "We will take over and three or four times a day send you <b>anxious, urgent, deeply upsetting emails</b>. Delete the email (or reply) and <b>POOF! the anxiety goes away</b>. Delete your account any time from any email."]
+                     [:p "We will take over and three or four times
+                     a day send you <b>anxious, urgent, deeply
+                     upsetting emails</b>. Delete the email (or
+                     reply) and <b>POOF! the anxiety goes
+                     away</b>. Delete your account any time."]
 
                      [:p "Relief is here if you want it."]]
 
                      [:div#form
                        [:h3 "my name is"]
-                       [:input.field {:type "text" :value "First name only" :name "name"}]
+                       [:input.field {:type "text"
+                                       :value "First name only"
+                                       :name "name"}]
                        [:div.gloss "So that we can personalize the terrible emails."]
 
                        [:h3 "my email is"]                       
-                       [:input.field {:type "text" :value "your@email.com" :name "email"}]
+                       [:input.field {:type "text"
+                                       :value "your@email.com"
+                                       :name "email"}]
                        [:div.gloss "Don't worry, every email you get has a link that lets you delete your account."]
                        [:h3 "my anxiety won't let me"]
-
                        [:div#anxieties-wrapper]
                        [:div.gloss "Finish my book. Manage my eating. Respond to email. Enter as many as you want."]]
                      [:div.submit-wrapper
-                       [:input#submit.submit {:type "submit" :value "Click here to start!"}]]]
-                     ])))
+                       [:input#submit.submit {:type "submit" :value "Click here to start!"}]]]])
+    params))
+
+
 (defroutes app-routes
 
   (GET "/" [] (make-home))
 
-
   (POST "/" {params :params}
     (let [errors (check-params params)
-              id (data/uuid)]
+           id (data/uuid)]
+      (info params errors id)
       (if (not= errors ())
         
-        (make-page "Anxiety Box: Anxiety received"
+        (make-page "Anxiety Box: Errors"
           (html/html
             [:div#main        
               [:h1 "Looks like you failed, which is typical of you. Please back up and try again."]
@@ -152,6 +189,9 @@ form();
                               [:div#main                          
                                [:h1 "Duplicate account"]
                                [:h2 "You've already signed up. We sent you an account reminder. It has a link that lets you delete your account and start again."]]))))))))
+
+  (GET "/edit/:confirm" [confirm]
+    (make-home (data/box-select-by-confirm confirm)))
   
   (GET "/activate/:id" [id]
     (do (let [res (first (data/box-activate id))]
