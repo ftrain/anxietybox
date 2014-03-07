@@ -10,7 +10,9 @@
                   [garden "1.1.5"]
                   [clj-http "0.9.0"]
                   [cheshire "5.3.1"]                  
-                  [com.taoensso/timbre "3.0.1"]
+                  [com.taoensso/timbre "3.1.1"]
+                  [lein-environ "0.4.0"]                  
+                  [environ "0.4.0"]
                                         ; project.clj
                   ]
   :plugins [[lein-ring "0.8.10"]]
