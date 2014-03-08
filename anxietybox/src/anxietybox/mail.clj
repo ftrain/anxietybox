@@ -57,8 +57,7 @@
     "\nYou can start a new account any time."
     ))
 
-(def box (anxietybox.data/box-select "ford@ftrain.com"))
-(anxiety-text box)
+
 
 
 (defn send-anxiety [box]
