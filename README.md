@@ -1,6 +1,8 @@
 # AnxietyBox
 
-Runs anxietybox.com
+Runs anxietybox.com. This is a kind of silly one-off project. It was discussed on the Reply All podcast.
+
+You can learn a little more at http://anxietybox.com.
 
 ## Prerequisites
 
