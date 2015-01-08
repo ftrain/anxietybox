@@ -119,7 +119,7 @@
                   "i respect that you just live your life and don't care if people think you are"
                   "most of your friends are doing okay, which makes me wonder why are you so"
                   "the only explanation for your career is that you are essentially"
-                  "when you meet successful people they think of you as" 
+                  "when you meet successful people they think of you as"
                   "Your total lack of self-control has left you"
                   "people pretend to be nice to you but they're thinking:"
                   "when you aren't around your friends say you are"
@@ -130,7 +130,7 @@
                   "unlike you, your 'friends' are not"
                   "the reason no one notices your work is because you are"
                   "the reason you are not famous is because you are"
-                  "obviously you would go further in life except for your tendency to be"                  
+                  "obviously you would go further in life except for your tendency to be"
                   "you could be successful if you were not"
                   "you might succeed if you didn't seem so"
                   "your parents deserve credit for loving someone so"
@@ -186,12 +186,12 @@
               "I saw that,"
               "I made a note that"])
 
-(def action ["you wrote" 
-             "you told me" 
-             "you emailed me" 
+(def action ["you wrote"
+             "you told me"
+             "you emailed me"
              "you said to me"
-             "you said" 
-             "you made a comment" 
+             "you said"
+             "you made a comment"
              "you impulsively wrote back"])
 
 (def datespan ["not long ago"
@@ -237,17 +237,17 @@
 
 (defn change-tense [anxiety]
   (string/replace anxiety #"my" "your"))
-(defn q [s] (str "\"" s "\""))               
+(defn q [s] (str "\"" s "\""))
 (defn make-reply [reply]
   (if reply  (str
               "\n\n"
-              (sentence 
+              (sentence
                (str
                 (rand-nth youknow)
                 " "
-                (rand-nth datespan)                  
+                (rand-nth datespan)
                 " "
-                (rand-nth action)                  
+                (rand-nth action)
                 ", "
                 (q reply)
                 "--and "
@@ -257,7 +257,7 @@
               " ")))
 
 (defn compose [anxiety reply]
-  (str 
+  (str
    (sentence (str (rand-nth contemplatives)
                   " "
                   (change-tense anxiety)))
@@ -279,4 +279,4 @@
    (rand-nth call-to-action)))
 
 
-
+(take 10 (repeatedly ps))

@@ -9,9 +9,9 @@
                   [hiccup "1.0.5"]
                   [garden "1.1.5"]
                   [clj-http "0.9.0"]
-                  [cheshire "5.3.1"]                  
+                  [cheshire "5.3.1"]
                   [com.taoensso/timbre "3.1.1"]
-                  [lein-environ "0.4.0"]                  
+                  [lein-environ "0.4.0"]
                   [environ "0.4.0"]
                                         ; project.clj
                   ]

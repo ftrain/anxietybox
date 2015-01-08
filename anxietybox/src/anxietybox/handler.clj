@@ -15,7 +15,7 @@
 ;; Logging prefix
 (timbre/refer-timbre)
 (timbre/set-config! [:appenders :spit :enabled?] true)
-(timbre/set-config! [:shared-appender-config :spit-filename] (env/env :log-file))
+;(timbre/set-config! [:shared-appender-config :spit-filename] (env/env :log-file))
 
 
 (def site-prefix "http://localhost:3000/")
