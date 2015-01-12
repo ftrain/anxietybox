@@ -279,4 +279,5 @@
    (rand-nth call-to-action)))
 
 
-(take 10 (repeatedly ps))
+
+

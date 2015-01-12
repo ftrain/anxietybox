@@ -7,11 +7,10 @@
 
 (timbre/refer-timbre)
 (timbre/set-config! [:appenders :spit :enabled?] true)
+;; TODO put this in env.
 (timbre/set-config! [:shared-appender-config :spit-filename] "/Users/ford/Desktop/logs/clojure.log")
 
-
 (def mailgun-auth ["api" (env/env :mailgun-api-key)])
-;(def mailgun-site "sandbox19441.mailgun.org")
 (def mailgun-site "anxietybox.com")
 (def mailgun-uri (str "https://api.mailgun.net/v2/" mailgun-site "/messages"))
 (def from-email "Your Anxiety <anxiety@anxietybox.com>")
@@ -56,9 +55,6 @@
     (:confirm box) 
     "\nYou can start a new account any time."
     ))
-
-
-
 
 (defn send-anxiety [box]
   (mailgun-send { :to (:email box)

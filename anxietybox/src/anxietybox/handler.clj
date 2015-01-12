@@ -17,7 +17,6 @@
 (timbre/set-config! [:appenders :spit :enabled?] true)
 ;(timbre/set-config! [:shared-appender-config :spit-filename] (env/env :log-file))
 
-
 (def site-prefix "http://localhost:3000/")
 
 (defn nest
@@ -105,6 +104,7 @@ form();
           [:a {:href "http://twitter.com/ftrain"} "Paul Ford."]
           " All rights reserved. "]]]]))
 
+;; TK make this templates
 (defn make-home [& params]
   (make-page "Anxiety Box"
     (html/html [:div#main
