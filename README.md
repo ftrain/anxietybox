@@ -1,8 +1,20 @@
 # AnxietyBox
 
-Runs anxietybox.com. This is a kind of silly one-off project. It was discussed on the Reply All podcast.
+Runs anxietybox.com. This is a kind of silly one-off project. It was
+discussed on the Reply All podcast.
 
-You can learn a little more at http://anxietybox.com.
+http://gimletmedia.com/episode/the-anxiety-box/
+
+And you can learn a little more at http://anxietybox.com.
+
+## TODO
+
+This thing is a hacky mess; it was my first attempt to get something
+working on a website using Clojure. It worked, but it's badly
+organized and undocumented. It's also tiny, and since I created it I
+wrote probably 20,000 more lines of Clojure/Clojurescript, so it
+should be possible to refactor.
+
 
 ## Prerequisites
 
