@@ -172,18 +172,18 @@ form();
               [:h1 "Looks like you failed, which is typical of you. Please back up and try again."]
               [:h2 errors]]))
 
-        (let [b (data/box-insert
+        (let [b (data/account-insert
                   (merge params {:confirm id}))]
               (if (not= (type b) "org.postgresql.util.PSQLException")
                 (do
-                  (mail/send-confirmation (data/box-insert (merge (nest params) {:confirm id})))
+                  (mail/send-confirmation (data/account-insert (merge (nest params) {:confirm id})))
                   (make-page "Anxiety Box: Anxiety received"
                              (html/html
                               [:div#main        
                                [:h1 "Anxiety Received"]
                                [:h2 "We received your anxiety, so at least you are able to fill out a form. Look for a confirmation email from anxiety@anxietybox.com"]])))
                 (do
-                  (mail/send-reminder (data/box-insert params))
+                  (mail/send-reminder (data/account-insert params))
                   (make-page "Anxiety Box: Duplicate account"
                              (html/html
                               [:div#main                          
@@ -191,17 +191,17 @@ form();
                                [:h2 "You've already signed up. We sent you an account reminder. It has a link that lets you delete your account and start again."]]))))))))
 
   (GET "/edit/:confirm" [confirm]
-    (make-home (data/box-select-by-confirm confirm)))
+    (make-home (data/account-select-by-confirm confirm)))
   
   (GET "/activate/:id" [id]
-    (do (let [res (first (data/box-activate id))]
+    (do (let [res (first (data/account-activate id))]
     (make-page "Anxiety Box"
       (html/html [:div#main
                    [:h1 
                      (if (= 1 res) "Activated" "Already activated")]])))))
 
   (GET "/delete/:id" [id]
-    (do (let [res (first (data/box-delete id))]
+    (do (let [res (first (data/account-delete id))]
           (make-page "Anxiety Box: Account deleted"
             (html/html
               [:div#main
@@ -220,7 +220,7 @@ form();
 
   (GET "/sendmail" []
     {:headers {"Content-Type" "application/json;charset=UTF-8"}
-      :body (map mail/send-anxiety (data/boxes-for-update))})
+      :body (map mail/send-anxiety (data/accounts-for-update))})
 
 
   ; Receives mailgun posts
@@ -229,11 +229,11 @@ form();
          :body  (cheshire/generate-string
                  (do (data/reply-insert 
                       {:box_id 
-                       (:id  (let [box (data/box-select (:sender params))]
+                       (:id  (let [box (data/account-select (:sender params))]
                                (if box box 
                                    (let [conf
                                          (drop 1 (re-find #"/delete/([\S\"]+)" (:body-plain params)))]
-                                     (if conf (data/box-select-by-confirm (first conf)))))))
+                                     (if conf (data/account-select-by-confirm (first conf)))))))
                        :description (:stripped-text params)})))})
 
   (route/resources "/")
@@ -242,5 +242,5 @@ form();
 (def app
   (handler/site app-routes))
 
-;(mail/send-anxiety (data/box-select "ford@ftrain.com"))
+;(mail/send-anxiety (data/account-select "ford@ftrain.com"))
 ;(map mail/send-anxiety (data/boxes-for-update))

@@ -1,6 +1,8 @@
 (ns anxietybox.data
   (:require
     [environ.core :as env]
+    [korma.db :as korma-db]
+    [korma.core :as korma]    
     [taoensso.timbre :as timbre]    
     [clojure.java.jdbc :as sql]))
 
@@ -10,107 +12,134 @@
 (timbre/set-config! [:shared-appender-config :spit-filename] (env/env :log-file))
 ;;
 
-(defn uuid
-  "Generate a UUID.
-   (uuid)
-   =>#uuid \"f6411771-a11e-40ed-acc8-a844ca2e59cd\"" 
-  [] (java.util.UUID/randomUUID))
+;; Database config
+(korma-db/defdb db (korma-db/postgres {:db (env/env :postgres-database)
+                                     :user (env/env :postgres-user)
+                                     :password (env/env :postgres-password)}))
 
+(korma/defentity accounts
+  (korma/entity-fields :created_time :id :name :email :count :confirm :active))
+(korma/defentity anxieties)
+(korma/defentity replies)
 
-(def pg {:subprotocol "postgresql"
-          :subname "anxietybox"
-          :user (env/env :postgres-user)
-          :password (env/env :postgres-password)
-          :stringtype "unspecified"})
+(defn account-insert
+  "Create a user account."
+  [{name :name email :email :as account}]
+  (do
+    (log "[account]" account)
+    {:result 
+      (try
+        (korma/insert accounts (korma/values account))
+        (catch Exception e
+          (do
+            (let [e-str (str e)]
+              (log "[account-insert error]" e-str
+                {:error e-str}))))}))
 
-(defn anxiety-insert
+; (account-insert {:name "paul ford" :email "ford@ftrain.com"})
+
+(defn account-select-by-confirm
   ""
-  [box anxiety]
-  (sql/insert! pg "anxiety"
-    {:description (second anxiety) :box_id (:id box)}))
-
-(defn box-insert
-  [box]
-  (log "[box]" box)
-  (try
-    (let [db-box (first (sql/insert! pg "box" (dissoc box :project)))]
-      (doall (map (partial anxiety-insert db-box) (:project box)))
-      db-box)
-    (catch Exception e e)))
-
-(defn reply-insert [reply]
-  (sql/insert! pg "reply" reply))
-
-(defn reply-select [confirm]
-  (let [box-id (:id (first (sql/query pg ["select id from box where confirm = ?" confirm])))]
-    (sql/query pg ["select * from reply where box_id = ? ORDER BY created_time DESC" box-id])))
-
-(defn reply-select-by-box [box]
-  (vec (sql/query pg ["select * from reply where box_id = ? ORDER BY created_time DESC" (:id box)])))
-
-(defn anxiety-select [box]
-  (vec (sql/query pg
-    ["select * from anxiety where box_id = ?" (:id box)])))
-
-(defn box-relate [box]
-  (merge box 
-    {:replies (reply-select-by-box box)}
-    {:anxieties (anxiety-select box)}))
-
-(defn box-select-by-confirm
   [confirm]
-  (prn confirm)
-  (box-relate
-    (first
-      (sql/query pg
-        ["select * from box where confirm=?" confirm]))))
+  (do
+    (log "[account-select-by-confirm]" confirm)
+    (account-relate
+      (first
+        (sql/query pg
+          ["select * from account where confirm=?" confirm])))))
 
-(defn box-select
-  "Fetch a full record for a box.
+(defn account-select-by-email
+  "Fetch a full record for a account.
 
-   (box-select \"ford@ftrain.com\")
+   (account-select \"ford@ftrain.com\")
 
-   => {:anxieties [{:description \"finishing my book\", :box_id
-   2, :id 1} {:description \"losing weight\", :box_id 2, :id 2}
-   {:description \"making friends\", :box_id 2, :id 3}], :active
+   => {:anxieties [{:description \"finishing my book\", :account_id
+   2, :id 1} {:description \"losing weight\", :account_id 2, :id 2}
+   {:description \"making friends\", :account_id 2, :id 3}], :active
    true, :confirm #uuid
    \"26ed5e80-ff88-424d-a57b-7e4359ad56bf\", :count 0, :email
    \"ford@ftrain.com\", :name \"Paul\", :id 2, :created_time #inst
    \"2014-03-01T11:55:39.631064000-00:00\"}"
-  
   [email]
-  (box-relate (first (sql/query pg ["select * from box where lower(email) = lower(?)" email]))))
+  (do
+    (log "[account-select-by-email]" email)
+    (account-relate (first (sql/query pg ["select * from account where lower(email) = lower(?)" email])))))
 
 
-
-(defn box-update [box]
-  (sql/update! pg "box" (dissoc box :id) ["id=?" (:id box)]))
-
-(defn anxiety-update [anxiety box]
+  
+  (defn anxiety-insert
+  "Add an anxiety to the account."
+  [{account-id :id :as the-account} {text} anxiety]
   (sql/insert! pg "anxiety"
-    (assoc (dissoc anxiety :id) {:box_id (:id box)})))
+    {:description (second anxiety) :account_id (:id account)}))
+
+
+(defn reply-insert
+  ""
+  [reply]
+  (sql/insert! pg "reply" reply))
+
+(defn reply-select
+  ""
+  [confirm]
+  (let [account-id (:id (first (sql/query pg ["select id from account where confirm = ?" confirm])))]
+    (sql/query pg ["select * from reply where account_id = ? ORDER BY created_time DESC" account-id])))
+
+(defn reply-select-by-account [account]
+  (vec (sql/query pg ["select * from reply where account_id = ? ORDER BY created_time DESC" (:id account)])))
+
+(defn anxiety-select [account]
+  (vec (sql/query pg
+    ["select * from anxiety where account_id = ?" (:id account)])))
+
+(defn account-relate
+  ""
+  [account]
+  (merge account 
+    {:replies (reply-select-by-account account)}
+    {:anxieties (anxiety-select account)}))
+
+
+(defn account-update
+  ""
+  [account]
+  (sql/update! pg "account" (dissoc account :id) ["id=?" (:id account)]))
+
+(defn anxiety-update
+  ""
+  [anxiety account]
+  (sql/insert! pg "anxiety"
+    (assoc (dissoc anxiety :id) {:account_id (:id account)})))
 
 (defn toggle-block [code bool]
-  (sql/update! pg "box"
-    {:active bool :confirm (uuid)}
+  ""
+  (sql/update! pg "account"
+    {:active bool}
     ["confirm=?" code]))
 
-(defn box-activate
+(defn account-activate
+  ""
   [code]
   (toggle-block code true))
 
-(defn box-deactivate
+(defn account-deactivate
+  ""
   [code]
   (toggle-block code false))
 
-(defn box-delete
+(defn account-delete
+  ""
   [code]
-  (sql/delete! pg "box" ["confirm=?" code]))
+  (sql/delete! pg "account" ["confirm=?" code]))
 
-(defn anxiety-enhance [box]
-  (merge box {:anxieties (anxiety-select box)}))
+(defn anxiety-enhance
+  ""
+  [account]
+  (merge account {:anxieties (anxiety-select account)}))
 
-(defn boxes-for-update []
-  (map anxiety-enhance (sql/query pg ["SELECT * from box where active=?" true])))
+(defn accounts-for-update
+  ""
+  []
+  (map anxiety-enhance (sql/query pg ["SELECT * from account where active=?" true])))
 
-;(boxes-for-update)
+
