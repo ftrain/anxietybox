@@ -2,6 +2,8 @@ DROP TABLE IF EXISTS account CASCADE;
 DROP TABLE IF EXISTS anxiety CASCADE;
 DROP TABLE IF EXISTS reply CASCADE;
 
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 -- The account of a user
 CREATE TABLE account (
        created_time TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
@@ -9,7 +11,7 @@ CREATE TABLE account (
        name VARCHAR(100) NOT NULL,
        email VARCHAR(100) UNIQUE NOT NULL,
        count INT NOT NULL DEFAULT 0,
-       confirm uuid NOT NULL,
+       confirm uuid DEFAULT UUID_GENERATE_V4(),
        active BOOLEAN DEFAULT FALSE
 );
 
@@ -20,7 +22,7 @@ CREATE UNIQUE INDEX confirm_index ON account (confirm);
 CREATE TABLE anxiety (
        id SERIAL PRIMARY KEY,
        account_id int REFERENCES account(id) ON DELETE CASCADE,
-       tracker uuid NOT NULL,
+       tracker uuid DEFAULT UUID_GENERATE_V4(),
        description text UNIQUE NOT NULL
 );
 
