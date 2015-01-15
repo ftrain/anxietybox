@@ -1,9 +1,9 @@
--- Information about user.
-DROP TABLE IF EXISTS box CASCADE;
+DROP TABLE IF EXISTS account CASCADE;
 DROP TABLE IF EXISTS anxiety CASCADE;
 DROP TABLE IF EXISTS reply CASCADE;
 
-CREATE TABLE box (
+-- The account of a user
+CREATE TABLE account (
        created_time TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
        id SERIAL PRIMARY KEY,
        name VARCHAR(100) NOT NULL,
@@ -11,22 +11,26 @@ CREATE TABLE box (
        count INT NOT NULL DEFAULT 0,
        confirm uuid NOT NULL,
        active BOOLEAN DEFAULT FALSE
-       );
+);
 
-CREATE UNIQUE INDEX lower_email_index ON box (lower(email));
+CREATE UNIQUE INDEX lower_email_index ON account (lower(email));
+CREATE UNIQUE INDEX confirm_index ON account (confirm);
 
-CREATE UNIQUE INDEX confirm_index ON box (confirm);
-
+-- Track anxieties
 CREATE TABLE anxiety (
        id SERIAL PRIMARY KEY,
-       box_id int REFERENCES box(id) ON DELETE CASCADE,
+       account_id int REFERENCES account(id) ON DELETE CASCADE,
+       tracker uuid NOT NULL,
        description text UNIQUE NOT NULL
-       );
+);
 
+CREATE UNIQUE INDEX track_index ON account (confirm);
+
+-- Track replies
 CREATE TABLE reply (
        created_time TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
        id SERIAL PRIMARY KEY,
-       box_id int REFERENCES box(id) ON DELETE CASCADE,
+       account_id int REFERENCES account(id),
+       anxiety_id int REFERENCES anxiety(id) ON DELETE CASCADE,
        description text
-       );
-       
+);
