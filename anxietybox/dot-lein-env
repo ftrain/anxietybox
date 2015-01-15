@@ -1,0 +1,5 @@
+; Remove this line and copy this file to .lein-env, then update the values
+{:mailgun-api-key "the-mailgun-api-key"
+:log-file "/Users/JohnMcCarthy/anxietybox/logs/clojure.log"
+:postgres-user "horacepippin"
+:postgres-password "dominos"}
