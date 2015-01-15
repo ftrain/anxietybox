@@ -1,11 +1,11 @@
 # AnxietyBox
 
-Runs anxietybox.com. This is a kind of silly one-off project. It was
-discussed on the Reply All podcast.
+This is the Clojure project code to run anxietybox.com.
 
+This project was discussed on the Reply All podcast in early 2015.
 http://gimletmedia.com/episode/the-anxiety-box/
 
-And you can learn a little more at http://anxietybox.com.
+It runs at http://anxietybox.com.
 
 ## TODO
 
