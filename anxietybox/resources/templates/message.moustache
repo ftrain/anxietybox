@@ -1,0 +1,22 @@
+{{salutation}} {{name}},
+
+{{message}}
+
+{{signoff}},
+
+Your Anxiety
+https://anxietybox.com
+________________________________________
+
+{{advertisement}}
+________________________________________
+
+  THIS anxiety: https://anxietybox.com/anxiety/{{anxiety_tracker}}
+  EDIT account: https://anxietybox.com/edit/{{account_tracker}}
+     .
+     .
+     .
+     .
+DELETE account: https://anxietybox.com/delete/{{account_tracker}}
+
+

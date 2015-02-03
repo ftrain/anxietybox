@@ -1,4 +1,4 @@
-(defproject anxietybox "0.1.0-SNAPSHOT"
+(defproject anxietybox "0.2.0-SITE"
   :description "Code for Anxietybox.com"
   :url "https://github.com/ftrain/anxietybox"
   :dependencies [[org.clojure/clojure "1.5.1"]
@@ -12,7 +12,10 @@
                   [clj-http "1.0.1"]
                   [cheshire "5.4.0"]
                   [com.taoensso/timbre "3.3.1"]
+                  [clojurewerkz/quartzite "2.0.0"]
                   [lein-environ "1.0.0"]
+                  [de.ubercode.clostache/clostache "1.4.0"]
+                  [org.clojure/data.csv "0.1.2"]
                   [environ "1.0.0"]]
   :plugins [[lein-ring "0.9.0"]]
   :ring {:handler anxietybox.handler/app}
