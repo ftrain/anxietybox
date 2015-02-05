@@ -167,23 +167,15 @@
   (prn
     (str "Sending opt-in email to " (:email acct))))
 
-(defn send-anxiety-email
-  [acct]
-  (prn
-    (str "Sending email to " (:email acct))))
-
-(defn mark-as-finished
-  [acct]
-  (korma/update mail_to_send
-    (korma/set-fields {:sent true})    
-    (korma/where {:id (:mail_id acct)})))
-
 (defn send-scheduled-emails
   []
   (map (fn [acct]
-         (do (mark-as-finished acct)
-           (send-anxiety-email acct)))
+         (do
+           ; Set sent to true
+           (korma/update mail_to_send
+             (korma/set-fields {:sent true})    
+             (korma/where {:id (:mail_id acct)}))
+           ; Send email
+           (prn
+             (str "Fake-sending email to " (:email acct)))))
     (fetch-emails-to-send)))
-
-
-(send-scheduled-emails)
